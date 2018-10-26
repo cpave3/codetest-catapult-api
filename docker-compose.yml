@@ -1,0 +1,42 @@
+###############################################################################
+#                          Generated on docker.io                          #
+###############################################################################
+version: "3.1"
+services:
+
+    redis:
+      image: redis:alpine
+      container_name: catapult-api-redis
+
+    mysql:
+      image: mysql:8.0
+      container_name: catapult-api-mysql
+      working_dir: /application
+      volumes:
+        - ./code:/application
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=api
+        - MYSQL_USER=api
+        - MYSQL_PASSWORD=api
+      ports:
+        - "3002:3306"
+
+    webserver:
+      image: nginx:alpine
+      container_name: catapult-api-webserver
+      working_dir: /application
+      volumes:
+          - ./code:/application
+          - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "3000:80"
+
+    php-fpm:
+      build: docker/php-fpm
+      container_name: catapult-api-php-fpm
+      working_dir: /application
+      volumes:
+        - ./code:/application
+        - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+
