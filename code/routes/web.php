@@ -14,3 +14,18 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+// V1 Routes
+$router->group(['prefix' => 'api/v1'], function () use ($router) {
+
+    // User Routes
+    $router->group(['prefix' => 'users'], function () use ($router) {
+        $router->get('/',  ['uses' => 'UserController@index']);
+        $router->get('/{id}', ['uses' => 'UserController@read']);
+        $router->post('/', ['uses' => 'UserController@create']);
+        $router->delete('/{id}', ['uses' => 'UserController@delete']);
+        $router->put('/{id}', ['uses' => 'UserController@update']);
+    });
+
+
+});
