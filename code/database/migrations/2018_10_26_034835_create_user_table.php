@@ -19,7 +19,7 @@ class CreateUserTable extends Migration
             $table->string('lastname');
             $table->string('email', 191)->unique();
             $table->string('password');
-            $table->json('meta');
+            $table->json('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

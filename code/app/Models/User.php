@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Components\Validator;
 
 class User extends Model
 {
@@ -24,29 +25,49 @@ class User extends Model
     protected $hidden = ['password', 'meta'];
 
     /**
+     * @return object|array
+     */
+    public function transform() {
+      return [
+        'email' => $this->email,
+        'firstname' => $this->firstname,
+        'lastname' => $this->lastname,
+      ];
+    }
+
+    /**
      * Used to validate incoming requests for CRUD operations
      */
     public static function validatePayload(array $payload, string $operation) {
+      $validator = new Validator();
       switch ($operation) {
         case 'create':
           $validationSchema = [
             'firstname' => [
-              'required' => true
+              'required'  => true
             ],
             'lastname' => [
-              'required' => true
+              'required'  => true
             ],
             'email' => [
-              'required' => true
+              'required'  => true,
+              'email'     => true,
+              'unique'    => true,
             ],
             'password' => [
-              'required' => true,
-              'min' => 8
+              'required'  => true,
+              'min'       => 8
             ],
           ];
           break;
         default:
+          $validationSchema = [];
           break;
       }
+      return $validator
+        ->setSchema($validationSchema)
+        ->setPayload($payload)
+        ->evaluate()
+        ->getResult();
     }
 }

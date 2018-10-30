@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -11,11 +12,19 @@ class UserController extends Controller
     }
 
     public function create(Request $request) {
-        if ($validation = User::validatePayload($request->all(), 'create')) {
-            $user = User::create($request->all());
-            return response()->json($user->transform(), 201);
-        } 
-        return response()->json($validation, 400);
+        $validator = $this->validate($request, [
+            'email'     => 'required|email|unique:users',
+            'firstname' => 'required',
+            'lastname'  => 'required',
+            'password'  => 'required|min:8'
+        ]);
+
+        $user = new User();
+        $user->fill($request->all());
+        $user->password = app('hash')->make($request->get('password'));
+        $user->save();
+        return response()->json($user->transform(), 201);
+    
     }
 
     public function read(int $id) {

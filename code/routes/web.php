@@ -15,8 +15,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+// JWT login
+$router->post('auth/login', ['uses' => 'AuthController@authenticate']);
+
 // V1 Routes
-$router->group(['prefix' => 'api/v1'], function () use ($router) {
+$router->group(['prefix' => 'api/v1', 'middleware' => 'jwt.auth'], function () use ($router) {
 
     // User Routes
     $router->group(['prefix' => 'users'], function () use ($router) {

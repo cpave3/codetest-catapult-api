@@ -16,7 +16,7 @@ class CreateWellnessTable extends Migration
         Schema::create('wellness', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
-            $table->json('meta');
+            $table->json('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
